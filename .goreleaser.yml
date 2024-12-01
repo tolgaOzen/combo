@@ -29,8 +29,6 @@ brews:
     directory: Formula
     homepage: "https://github.com/tolgaOzen/combo"
     license: "MIT"
-    custom_block: |
-      head "https://github.com/tolgaOzen/combo.git", :branch => "master"
     install: |-
         bin.install "combo"
     repository:
@@ -67,4 +65,4 @@ release:
   mode: replace
   prerelease: auto
   footer: |
-    This version can be found as Docker images at tolgaOzen/combo:v{{ .Version }} and ghcr.io/tolgaOzen/combo:v{{ .Version }}.
+    This is an automated release.
