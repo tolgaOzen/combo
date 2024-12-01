@@ -28,7 +28,7 @@ integration-test: ### run integration-test
 	go clean -testcache && go test -v ./integration-test/...
 
 .PHONY: build
-build: ## Build/compile the Permify service
+build: ## Build/compile the Combo service
 	go build -o ./combo ./cmd/combo
 
 .PHONY: format

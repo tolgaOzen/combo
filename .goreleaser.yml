@@ -35,7 +35,7 @@ brews:
         bin.install "combo"
     repository:
       name: combo-homebrew-tap
-      owner: combo
+      owner: tolgaOzen
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
     commit_author:
       name: permify-bot
