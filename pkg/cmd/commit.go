@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -52,9 +52,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
 	if m.quitting {
 		if m.choice == "yes" {
-			return fmt.Sprintf("%s\n\n", lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("10")).Render("✔ Commit executed successfully!"))
+			return fmt.Sprintf(
+				"%s\n\n%s\n",
+				lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("10")).Render("✔ Commit executed successfully!"),
+				lipgloss.NewStyle().Foreground(lipgloss.Color("7")).Italic(true).Render("Your changes have been committed. You can push them to your remote repository."),
+			)
 		}
-		return fmt.Sprintf("%s\n\n", lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("9")).Render("✘ Commit aborted."))
+		return fmt.Sprintf(
+			"%s\n\n%s\n",
+			lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("9")).Render("✘ Commit aborted."),
+			lipgloss.NewStyle().Foreground(lipgloss.Color("7")).Italic(true).Render("No changes have been committed. You can revise and try again."),
+		)
 	}
 
 	// Define styles
@@ -100,7 +108,7 @@ func commit() func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		dir, err := os.UserHomeDir()
 		if err != nil {
-			log.Fatalf("Error getting user home directory: %v", err)
+			return fmt.Errorf("failed to get user home directory: %w", err)
 		}
 
 		// Configuration file path
@@ -113,33 +121,33 @@ prompt_locale=en-US
 prompt_max_length=72
 `
 		if err := EnsureConfig(configPath, defaultContent); err != nil {
-			log.Fatalf("Error ensuring configuration: %v", err)
+			return fmt.Errorf("failed to ensure configuration: %w", err)
 		}
 
 		// Load configuration
 		config, err := LoadConfig(configPath)
 		if err != nil {
-			log.Fatalf("Error loading configuration: %v", err)
+			return fmt.Errorf("failed to load configuration: %w", err)
 		}
 
 		// Retrieve values from the config
 		apiKey, ok := config["openai_api_key"]
-		if !ok {
-			log.Fatal("openai_api_key is missing in the configuration file")
+		if !ok || apiKey == "" {
+			return fmt.Errorf("missing or empty 'openai_api_key' in configuration")
 		}
 
 		locale, ok := config["prompt_locale"]
-		if !ok {
-			locale = "" // Default locale
+		if !ok || locale == "" {
+			locale = "en-US" // Default locale
 		}
 
 		maxLengthStr, ok := config["prompt_max_length"]
-		if !ok {
+		if !ok || maxLengthStr == "" {
 			maxLengthStr = "72" // Default max length
 		}
-		maxLength := 72 // Convert string to int
-		if ml, err := strconv.Atoi(maxLengthStr); err == nil {
-			maxLength = ml
+		maxLength, err := strconv.Atoi(maxLengthStr)
+		if err != nil {
+			return fmt.Errorf("invalid 'prompt_max_length' in configuration: %w", err)
 		}
 
 		// Initialize the OpenAI client
@@ -152,12 +160,12 @@ prompt_max_length=72
 			prompt.WithMaxLength(maxLength),
 		)
 		if err != nil {
-			log.Fatal("Prompt generation error")
+			return fmt.Errorf("failed to generate prompt: %w", err)
 		}
 
 		diff, err := git.GetDifferences()
 		if err != nil {
-			log.Fatal("Prompt generation error")
+			return fmt.Errorf("failed to get git differences: %w", err)
 		}
 
 		// Prepare the chat completion request
@@ -170,7 +178,12 @@ prompt_max_length=72
 		// Send the chat completion request and handle the response
 		response, err := client.SendChatCompletionRequest(ctx, request)
 		if err != nil {
-			log.Fatalf("ChatCompletion error: %v\n", err)
+			return fmt.Errorf("chat completion request failed: %w", err)
+		}
+
+		// Ensure the chat completion response and commit message are valid
+		if len(response.Choices) == 0 || response.Choices[0].Message.Content == "" {
+			return fmt.Errorf("no commit message generated from the OpenAI response")
 		}
 
 		// Generated commit message
@@ -180,18 +193,41 @@ prompt_max_length=72
 		program := tea.NewProgram(&model{message: message})
 		mod, err := program.Run()
 		if err != nil {
-			fmt.Printf("Alas, there's been an error: %v", err)
-			os.Exit(1)
+			return fmt.Errorf("bubble tea program encountered an error: %w", err)
 		}
 
-		fmt.Println(mod)
+		// Check user choice
+		if result, ok := mod.(model); ok && result.choice == "yes" {
+			// Run git commit command
+			if err := runGitCommit(message); err != nil {
+				return fmt.Errorf("failed to run git commit: %w", err)
+			}
+		}
 
 		return nil
 	}
 }
 
+// runGitCommit executes the git commit command
+func runGitCommit(message string) error {
+	cmd := exec.Command("git", "commit", "-m", message)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
 // LoadConfig loads key-value pairs from a configuration file
 func LoadConfig(filePath string) (map[string]string, error) {
+	// Sanitize and validate the file path
+	filePath = filepath.Clean(filePath)
+	trustedDir, err := getConfigDirectory()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get trusted directory: %w", err)
+	}
+	if !strings.HasPrefix(filePath, trustedDir) {
+		return nil, fmt.Errorf("file path is outside the trusted directory: %s", filePath)
+	}
+
 	config := make(map[string]string)
 
 	file, err := os.Open(filePath)
@@ -227,11 +263,21 @@ func LoadConfig(filePath string) (map[string]string, error) {
 
 // EnsureConfig ensures the directory and configuration file exist
 func EnsureConfig(filePath, defaultContent string) error {
+	// Sanitize and validate the file path
+	filePath = filepath.Clean(filePath)
+	trustedDir, err := getConfigDirectory()
+	if err != nil {
+		return fmt.Errorf("failed to get trusted directory: %w", err)
+	}
+	if !strings.HasPrefix(filePath, trustedDir) {
+		return fmt.Errorf("file path is outside the trusted directory: %s", filePath)
+	}
+
 	dir := filepath.Dir(filePath)
 
 	// Create directory if it does not exist
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		if err := os.MkdirAll(dir, 0o755); err != nil {
+		if err := os.MkdirAll(dir, 0o750); err != nil {
 			return fmt.Errorf("failed to create directory %s: %w", dir, err)
 		}
 	}
@@ -251,4 +297,12 @@ func EnsureConfig(filePath, defaultContent string) error {
 	}
 
 	return nil
+}
+
+func getConfigDirectory() (string, error) {
+	dir, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("failed to get user home directory: %w", err)
+	}
+	return filepath.Join(dir, ".combo"), nil
 }

@@ -102,9 +102,20 @@ func getConfigPath() (string, error) {
 
 // loadOrCreateConfig - loads the config file or creates a new one if it doesn't exist
 func loadOrCreateConfig(filePath string) (map[string]string, error) {
+	// Ensure the file path is within the trusted directory
+	trustedDir, err := getConfigPath()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get trusted directory: %w", err)
+	}
+
+	filePath = filepath.Clean(filePath)
+	if !strings.HasPrefix(filePath, trustedDir) {
+		return nil, fmt.Errorf("invalid file path: %s", filePath)
+	}
+
 	// Ensure the directory exists
 	dir := filepath.Dir(filePath)
-	if err := os.MkdirAll(dir, 0o755); err != nil {
+	if err := os.MkdirAll(dir, 0o750); err != nil {
 		return nil, fmt.Errorf("failed to create config directory: %w", err)
 	}
 
@@ -151,6 +162,17 @@ func loadOrCreateConfig(filePath string) (map[string]string, error) {
 
 // saveConfig - saves the configuration map to the file
 func saveConfig(filePath string, config map[string]string) error {
+	// Ensure the file path is within the trusted directory
+	trustedDir, err := getConfigPath()
+	if err != nil {
+		return fmt.Errorf("failed to get trusted directory: %w", err)
+	}
+
+	filePath = filepath.Clean(filePath)
+	if !strings.HasPrefix(filePath, trustedDir) {
+		return fmt.Errorf("invalid file path: %s", filePath)
+	}
+
 	file, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to create config file: %w", err)
