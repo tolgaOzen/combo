@@ -15,6 +15,9 @@ func main() {
 	branch := cmd.NewBranchCommand()
 	root.AddCommand(branch)
 
+	version := cmd.NewVersionCommand()
+	root.AddCommand(version)
+
 	config := cmd.NewConfigCommand()
 	root.AddCommand(config)
 
