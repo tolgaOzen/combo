@@ -110,9 +110,9 @@ prompt_max_length=72
 		// Check user choice
 		if result, ok := mod.(model); ok && result.choice == "yes" {
 			// Run git commit command
-			//if err := runGitBranch(message); err != nil {
-			//	return fmt.Errorf("failed to run git commit: %w", err)
-			//}
+			if err := runGitBranch(message); err != nil {
+				return fmt.Errorf("failed to run git commit: %w", err)
+			}
 		}
 
 		return nil
