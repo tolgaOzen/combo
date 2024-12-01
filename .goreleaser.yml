@@ -34,10 +34,10 @@ brews:
     repository:
       name: combo-homebrew-tap
       owner: tolgaOzen
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+      branch: main
     commit_author:
-      name: permify-bot
-      email: hello@permify.co
+      name: tolgaOzen
+      email: mtolgaozen@gmail.com
     url_template: "https://github.com/tolgaOzen/combo/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
 nfpms:
   -
