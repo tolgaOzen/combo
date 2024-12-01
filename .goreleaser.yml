@@ -28,9 +28,9 @@ brews:
     download_strategy: CurlDownloadStrategy
     directory: Formula
     homepage: "https://github.com/tolgaOzen/combo"
-    license: "Apache-2.0"
+    license: "MIT"
     custom_block: |
-      head "https://github.com/tolgaOzen/combo.git", :branch => "main"
+      head "https://github.com/tolgaOzen/combo.git", :branch => "master"
     install: |-
         bin.install "combo"
     repository:
