@@ -48,18 +48,10 @@ nfpms:
       - deb
       - rpm
       - apk
-      - msi # Add MSI format here
     homepage: "https://github.com/tolgaOzen"
     license: "MIT"
     maintainer: "tolga <mtolgaozen@gmail.com>"
     vendor: "Tolga Ozen"
-    contents:
-      - src: "./dist/windows/amd64/combo.exe" # Path to the executable
-        dst: "/Program Files/Combo/combo.exe" # Destination in the MSI
-    msi:
-      product_name: "Combo CLI"
-      upgrade_code: "A2E6D8A1-5E84-4C5F-A9C6-F5BFE89775B3" # Unique GUID for upgrades
-      manufacturer: "Tolga Ozen"
 snapshot:
   version_template: "{{ incpatch .Version }}-next"
 changelog:
