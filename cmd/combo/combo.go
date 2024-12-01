@@ -12,6 +12,9 @@ func main() {
 	commit := cmd.NewCommitCommand()
 	root.AddCommand(commit)
 
+	branch := cmd.NewBranchCommand()
+	root.AddCommand(branch)
+
 	config := cmd.NewConfigCommand()
 	root.AddCommand(config)
 

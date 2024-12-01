@@ -131,8 +131,8 @@ func WithMaxLength(maxLength int) Option {
 	}
 }
 
-// GeneratePrompt generates a concise prompt for creating git commit messages.
-func GeneratePrompt(style CommitStyle, opts ...Option) (string, error) {
+// GenerateCommitPrompt generates a concise prompt for creating git commit messages.
+func GenerateCommitPrompt(style CommitStyle, opts ...Option) (string, error) {
 	// Default configuration
 	config := &Config{
 		Locale:    EnUS, // Default to en-US
@@ -164,11 +164,11 @@ func GeneratePrompt(style CommitStyle, opts ...Option) (string, error) {
 	config.CommitFormat = commitFormat
 
 	// Build the prompt using the configuration.
-	return buildPrompt(config)
+	return buildCommitPrompt(config)
 }
 
 // buildPrompt constructs the final prompt string based on the given configuration.
-func buildPrompt(config *Config) (string, error) {
+func buildCommitPrompt(config *Config) (string, error) {
 	// Validate configuration
 	if config.Locale.String() == "" {
 		return "", fmt.Errorf("locale cannot be empty")
@@ -194,5 +194,43 @@ Format: Use the specified commit message format:
 		config.MaxLength,
 		config.CommitDescriptions,
 		config.CommitFormat,
+	), nil
+}
+
+// GenerateBranchNamePrompt generates a concise prompt for creating Git branch names.
+func GenerateBranchNamePrompt(opts ...Option) (string, error) {
+	// Default configuration
+	config := &Config{
+		Locale:    EnUS, // Default to en-US
+		MaxLength: 50,   // Default max length for branch names
+	}
+
+	// Apply functional options
+	for _, opt := range opts {
+		opt(config)
+	}
+
+	// Validate configuration
+	if config.Locale.String() == "" {
+		return "", fmt.Errorf("locale cannot be empty")
+	}
+	if config.MaxLength <= 0 {
+		return "", fmt.Errorf("maxLength must be greater than 0")
+	}
+
+	// Construct the branch name prompt
+	return buildBranchNamePrompt(config)
+}
+
+// buildBranchNamePrompt constructs the final prompt string based on the given configuration.
+func buildBranchNamePrompt(config *Config) (string, error) {
+	return fmt.Sprintf(
+		`Generate a concise and descriptive Git branch name for the given context:
+Language: %s
+Maximum length: %d characters.
+Focus: Use hyphens to separate words. The branch name should reflect the changes being made or the feature being implemented.
+`,
+		config.Locale.String(),
+		config.MaxLength,
 	), nil
 }
