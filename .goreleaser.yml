@@ -32,7 +32,7 @@ brews:
     install: |-
         bin.install "combo"
     repository:
-      name: homebrew-tap-combo
+      name: homebrew-tap
       owner: tolgaOzen
       branch: main
     commit_author:
