@@ -18,26 +18,26 @@ import (
 )
 
 // Define the Bubble Tea model
-type model struct {
+type commitModel struct {
 	message  string
 	choice   string
 	quitting bool
 }
 
 // Init Initial model setup
-func (m model) Init() tea.Cmd {
+func (m commitModel) Init() tea.Cmd {
 	return nil
 }
 
 // Update handles user input and state changes
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m commitModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "y", "Y", "", tea.KeyEnter.String():
-			return model{message: m.message, choice: "yes", quitting: true}, tea.Quit
+			return commitModel{message: m.message, choice: "yes", quitting: true}, tea.Quit
 		case "n", "N":
-			return model{message: m.message, choice: "no", quitting: true}, tea.Quit
+			return commitModel{message: m.message, choice: "no", quitting: true}, tea.Quit
 		case tea.KeyCtrlC.String(), tea.KeyEsc.String():
 			return m, tea.Quit
 		}
@@ -46,7 +46,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 // View renders the UI
-func (m model) View() string {
+func (m commitModel) View() string {
 	if m.quitting {
 		if m.choice == "yes" {
 			return fmt.Sprintf(
@@ -187,14 +187,14 @@ prompt_max_length=72
 		message := response.Choices[0].Message.Content
 
 		// Bubble Tea program setup
-		program := tea.NewProgram(&model{message: message})
+		program := tea.NewProgram(&commitModel{message: message})
 		mod, err := program.Run()
 		if err != nil {
 			return fmt.Errorf("bubble tea program encountered an error: %w", err)
 		}
 
 		// Check user choice
-		if result, ok := mod.(model); ok && result.choice == "yes" {
+		if result, ok := mod.(commitModel); ok && result.choice == "yes" {
 			// Run git commit command
 			if err := runGitCommit(message); err != nil {
 				return fmt.Errorf("failed to run git commit: %w", err)

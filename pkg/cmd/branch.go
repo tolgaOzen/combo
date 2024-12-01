@@ -1,18 +1,27 @@
 package cmd
 
 import (
-	`context`
-	`fmt`
-	tea `github.com/charmbracelet/bubbletea`
-	`github.com/spf13/cobra`
-	`os`
-	`path/filepath`
-	`time`
+	"context"
+	"fmt"
+	"os"
+	"path/filepath"
+	"time"
 
-	`github.com/tolgaOzen/combo/internal`
-	`github.com/tolgaOzen/combo/pkg/git`
-	`github.com/tolgaOzen/combo/pkg/prompt`
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
+	"github.com/spf13/cobra"
+
+	"github.com/tolgaOzen/combo/internal"
+	"github.com/tolgaOzen/combo/pkg/git"
+	"github.com/tolgaOzen/combo/pkg/prompt"
 )
+
+// Define the Bubble Tea model
+type branchModel struct {
+	message  string
+	choice   string
+	quitting bool
+}
 
 // NewBranchCommand -
 func NewBranchCommand() *cobra.Command {
@@ -23,6 +32,72 @@ func NewBranchCommand() *cobra.Command {
 		Args:  cobra.NoArgs,
 	}
 	return command
+}
+
+// Init Initial model setup
+func (m branchModel) Init() tea.Cmd {
+	return nil
+}
+
+// Update handles user input and state changes
+func (m branchModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "y", "Y", "", tea.KeyEnter.String():
+			return commitModel{message: m.message, choice: "yes", quitting: true}, tea.Quit
+		case "n", "N":
+			return commitModel{message: m.message, choice: "no", quitting: true}, tea.Quit
+		case tea.KeyCtrlC.String(), tea.KeyEsc.String():
+			return m, tea.Quit
+		}
+	}
+	return m, nil
+}
+
+// View renders the UI for branch name confirmation
+func (m branchModel) View() string {
+	if m.quitting {
+		if m.choice == "yes" {
+			return fmt.Sprintf(
+				"%s\n\n%s\n",
+				lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("10")).Render("✔ Branch created successfully!"),
+				lipgloss.NewStyle().Foreground(lipgloss.Color("7")).Italic(true).Render("You can now switch to your new branch and start working."),
+			)
+		}
+		return fmt.Sprintf(
+			"%s\n\n%s\n",
+			lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("9")).Render("✘ Branch creation aborted."),
+			lipgloss.NewStyle().Foreground(lipgloss.Color("7")).Italic(true).Render("No branch was created. You can revise and try again."),
+		)
+	}
+
+	// Define styles
+	brandStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("7")).
+		Padding(0, 0)
+
+	headerStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("6")).
+		Underline(true)
+
+	messageStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("2")).
+		Italic(true).
+		PaddingLeft(2)
+
+	promptStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("3")).
+		PaddingTop(1)
+
+	// Render sections
+	brand := brandStyle.Render("Welcome to Combo CLI")
+	header := headerStyle.Render("Here’s your suggested branch name:")
+	message := messageStyle.Render(fmt.Sprintf("➤ %s", m.message))
+	prompt := promptStyle.Render("Would you like to create this branch? (Y/n):")
+
+	// Combine output
+	return fmt.Sprintf("%s\n\n%s\n\n%s\n%s", brand, header, message, prompt)
 }
 
 func branch() func(cmd *cobra.Command, args []string) error {
@@ -101,14 +176,14 @@ prompt_max_length=72
 		message := response.Choices[0].Message.Content
 
 		// Bubble Tea program setup
-		program := tea.NewProgram(&model{message: message})
+		program := tea.NewProgram(&branchModel{message: message})
 		mod, err := program.Run()
 		if err != nil {
 			return fmt.Errorf("bubble tea program encountered an error: %w", err)
 		}
 
 		// Check user choice
-		if result, ok := mod.(model); ok && result.choice == "yes" {
+		if result, ok := mod.(branchModel); ok && result.choice == "yes" {
 			// Run git commit command
 			if err := runGitBranch(message); err != nil {
 				return fmt.Errorf("failed to run git commit: %w", err)

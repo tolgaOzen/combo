@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	`bufio`
-	`fmt`
-	`os`
-	`os/exec`
-	`path/filepath`
-	`strings`
+	"bufio"
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
 )
 
 // LoadConfig loads key-value pairs from a configuration file
