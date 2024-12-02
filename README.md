@@ -19,7 +19,7 @@ Combo is a command-line tool designed to simplify Git workflows by leveraging AI
 
 1. Add the Combo tap:
    ```bash
-   brew tap tolgaOzen/combo
+   brew tap tolgaOzen/tap
    ```
 
 2. Install Combo:
@@ -29,7 +29,7 @@ Combo is a command-line tool designed to simplify Git workflows by leveraging AI
 
 3. Verify installation:
    ```bash
-   combo --version
+   combo version
    ```
 
 ---
