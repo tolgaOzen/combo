@@ -91,7 +91,7 @@ func (m branchModel) View() string {
 		PaddingTop(1)
 
 	// Render sections
-	brand := brandStyle.Render("Welcome to Combo CLI")
+	brand := brandStyle.Render("Generating your branch name...")
 	header := headerStyle.Render("Here’s your suggested branch name:")
 	message := messageStyle.Render(fmt.Sprintf("➤ %s", m.message))
 	prompt := promptStyle.Render("Would you like to create this branch? (Y/n):")

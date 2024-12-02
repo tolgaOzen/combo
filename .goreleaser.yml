@@ -50,6 +50,17 @@ nfpms:
     license: "MIT"
     maintainer: "tolga <mtolgaozen@gmail.com>"
     vendor: "Tolga Ozen"
+msi:
+  - id: combo
+    name: "combo-{{.MsiArch}}"
+    wxs: ./windows/combo.wxs
+    ids:
+      - combo
+    goamd64: v1
+    extra_files:
+      - assets/combo.svg
+    replace: true
+    mod_timestamp: "{{ .CommitTimestamp }}"
 snapshot:
   version_template: "{{ incpatch .Version }}-next"
 changelog:

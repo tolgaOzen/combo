@@ -81,7 +81,7 @@ func (m commitModel) View() string {
 		PaddingTop(1)
 
 	// Render sections
-	brand := brandStyle.Render("Welcome to Combo CLI")
+	brand := brandStyle.Render("Generating your commit message...")
 	header := headerStyle.Render("Here’s your commit message:")
 	message := messageStyle.Render(fmt.Sprintf("➤ %s", m.message))
 	prompt := promptStyle.Render("Would you like to use this message? (Y/n):")
