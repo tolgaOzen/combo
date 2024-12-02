@@ -53,12 +53,12 @@ nfpms:
 msi:
   - id: combo
     name: "combo-{{.MsiArch}}"
-    wxs: ./windows/combo.wxs
+    wxs: ./assets/windows/combo.wxs
     ids:
       - combo
     goamd64: v1
     extra_files:
-      - assets/combo.svg
+      - ./assets/combo.svg
     replace: true
     mod_timestamp: "{{ .CommitTimestamp }}"
 snapshot:

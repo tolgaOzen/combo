@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+    <Product
+        Name='{{.ProjectName}} {{.Version}}'
+        Id='c8d5caaf-5ca5-4c29-bb96-42bb5a313d48'
+        UpgradeCode='8c66c6bf-917d-40a7-a87a-1eb22937b6d6'
+        Language='1033'
+        Codepage='1252'
+        Version='{{.Version}}'
+        Manufacturer='Combo'>
+
+        <Package
+            Id='*'
+            Keywords='Installer'
+            Description="{{.ProjectName}} installer"
+            Comments=''
+            Manufacturer='Combo'
+            InstallerVersion='200'
+            Languages='1033'
+            Compressed='yes'
+            SummaryCodepage='1252'
+        />
+
+        <Media
+            Id='1'
+            Cabinet='Combo.cab'
+            EmbedCab='yes'
+            DiskPrompt="CD-ROM #1"
+        />
+
+        <Property
+            Id='DiskPrompt'
+            Value="{{.ProjectName}} {{.Version}} Installation [1]"
+        />
+
+        <Directory Id='TARGETDIR' Name='SourceDir'>
+            <Directory Id='ProgramFiles{{ if eq .Arch "amd64" }}64{{ end }}Folder' Name='PFiles'>
+                <Directory Id='{{.ProjectName}}' Name='{{.ProjectName}}'>
+                    <Component
+                        Id='MainExecutable'
+                        Guid='29537420-59de-4eb6-96cc-421ddab93b88'
+                    >
+                        <File
+                            Id='{{.Binary}}.exe'
+                            Name='{{.Binary}}.exe'
+                            DiskId='1'
+                            Source='{{.Binary}}.exe'
+                            KeyPath='yes'
+                        />
+                    </Component>
+                </Directory>
+            </Directory>
+        </Directory>
+
+        <Feature Id='Complete' Level='1'>
+            <ComponentRef Id='MainExecutable' />
+        </Feature>
+    </Product>
+</Wix>
