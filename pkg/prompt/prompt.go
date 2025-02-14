@@ -73,10 +73,10 @@ const (
 	Conventional CommitStyle = "conventional"
 )
 
-// commitStyleFormats maps CommitStyle to its message format.
+// commitStyleFormats defines commit message formats as strings.
 var commitStyleFormats = map[CommitStyle]string{
 	Empty:        "<commit message>",
-	Conventional: "<type>(<optional scope>): <commit message>",
+	Conventional: "<type>(<optional scope>): <commit message starting with lowercase>",
 }
 
 // SpecifyCommitFormat returns the format specification for a given CommitStyle.

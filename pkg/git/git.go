@@ -7,47 +7,50 @@ import (
 	"strings"
 )
 
+const (
+	MaxDiffSize = 4096 // Limit to 4KB to prevent overwhelming LLM
+)
+
 // DiffResult encapsulates the staged diff results
 type DiffResult struct {
 	Files []string
 	Diff  string
 }
 
-// GetDifferences retrieves and prints staged differences.
+// GetDifferences retrieves staged differences, truncating if needed.
 func GetDifferences() (string, error) {
-	// Fetch staged differences
 	result, err := FetchStagedDiff()
 	if err != nil {
 		return "", fmt.Errorf("error fetching staged differences: %w", err)
 	}
 
-	// Handle no staged changes
 	if result == nil || len(result.Files) == 0 {
 		return "", fmt.Errorf("no staged changes found. Stage your changes manually, or use the `--all` flag")
 	}
 
-	// Format and return the file names
-	return result.Diff, nil
+	diff := result.Diff
+	if len(diff) > MaxDiffSize {
+		diff = diff[:MaxDiffSize] + "\n[...truncated]"
+	}
+
+	return diff, nil
 }
 
-// FetchStagedDiff retrieves staged changes, including file names and diff content.
+// FetchStagedDiff retrieves staged changes using `--patch --compact-summary` for better output.
 func FetchStagedDiff() (*DiffResult, error) {
-	// Fetch the list of staged files
 	filesOut, err := runGitCommand([]string{"diff", "--cached", "--name-only"})
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve staged file names: %w", err)
 	}
 
-	// If no files are staged, return nil
 	files := strings.Split(strings.TrimSpace(filesOut), "\n")
 	if len(files) == 1 && files[0] == "" {
 		return nil, nil
 	}
 
-	// Fetch the full staged diff
-	diffOut, err := runGitCommand([]string{"diff", "--cached", "--diff-algorithm=minimal"})
+	diffOut, err := runGitCommand([]string{"diff", "--cached", "--patch", "--compact-summary"})
 	if err != nil {
-		return nil, fmt.Errorf("failed to retrieve staged diff: %w", err)
+		return nil, fmt.Errorf("failed to retrieve staged diff summary: %w", err)
 	}
 
 	return &DiffResult{
@@ -56,7 +59,7 @@ func FetchStagedDiff() (*DiffResult, error) {
 	}, nil
 }
 
-// runGitCommand executes a Git command and returns the output as a string.
+// runGitCommand executes a Git command and returns the output.
 func runGitCommand(args []string) (string, error) {
 	var out bytes.Buffer
 	cmd := exec.Command("git", args...)
