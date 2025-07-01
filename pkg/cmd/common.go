@@ -108,7 +108,7 @@ func runGitCommit(message string) error {
 	return cmd.Run()
 }
 
-// runGitCommit executes the git commit command
+// runGitBranch executes the git branch creation command
 func runGitBranch(name string) error {
 	cmd := exec.Command("git", "checkout", "-b", name)
 	cmd.Stdout = os.Stdout

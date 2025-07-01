@@ -42,6 +42,10 @@ lint-all: linter-golangci linter-hadolint linter-dotenv ## Run all linters
 security-scan: ## Scan code for security vulnerabilities using Gosec
 	gosec -exclude-dir=sdk -exclude-dir=playground -exclude-dir=docs -exclude-dir=assets ./...
 
+.PHONY: test
+test: ## Run all tests
+	go test -race -v ./...
+
 .PHONY: coverage
 coverage: ## Generate global code coverage report
 	go test -coverprofile=covprofile ./cmd/... ./internal/... ./pkg/...

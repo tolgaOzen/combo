@@ -1,200 +1,307 @@
-# Combo CLI
-
-Combo is a command-line tool designed to simplify Git workflows by leveraging AI for generating commit messages, branch names, changelogs, and linking commits to issue trackers. It integrates seamlessly into your development process to save time and ensure consistency, especially with conventional commit standards.
-
----
-
-## Features
-
-- **Commit Message Generation**: Create meaningful and consistent commit messages based on conventional commit standards and your staged changes with AI assistance.
-- **Branch Name Suggestions**: Generate branch names aligned with your changes or ticket references.
-- **Issue Tracker Integration**: Link commits to issue trackers by specifying an issue ID.
-- **Changelog Creation**: Automatically generate changelogs based on your Git history.
-
----
-
-## Installation
-
-### Using Homebrew
-
-1. Add the Combo tap:
-   ```bash
-   brew tap tolgaOzen/tap
-   ```
-
-2. Install Combo:
-   ```bash
-   brew install combo
-   ```
-
-3. Verify installation:
-   ```bash
-   combo version
-   ```
+<div align="center">
+  <img src="assets/combo.svg" alt="Combo CLI Logo" width="200" height="200">
+  
+  # 🚀 Combo CLI
+  
+  **AI-Powered Git Workflow Automation**
+  
+  [![Version](https://img.shields.io/badge/version-v0.2.3-blue.svg)](https://github.com/tolgaOzen/combo/releases)
+  [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+  [![Go Report Card](https://goreportcard.com/badge/github.com/tolgaOzen/combo)](https://goreportcard.com/report/github.com/tolgaOzen/combo)
+  
+  *Simplify your Git workflows with AI-generated commit messages, branch names, and more.*
+</div>
 
 ---
 
-## Usage
+## ✨ Features
 
-### Commands
+🤖 **Smart Commit Messages** - Generate meaningful commit messages following conventional commit standards  
+🌿 **Intelligent Branch Names** - Create descriptive branch names based on your changes  
+🔗 **Issue Tracker Integration** - Link commits to issues automatically  
+📚 **Changelog Generation** - Auto-generate changelogs from Git history  
+🌍 **Multi-language Support** - Support for 15+ languages and locales  
+⚙️ **Configurable** - Customize prompts, formats, and AI behavior
 
-1. **Commit Message**:
-   Generate and confirm a commit message:
-   ```bash
-   combo commit
-   ```
+## 📦 Installation
 
-   Example:
-   ```
-   Here’s your commit message:
+### 🍺 Homebrew (Recommended)
 
-   ➤ feat(config): add support for managing API keys and locales
+```bash
+# Add the Combo tap
+brew tap tolgaOzen/tap
 
-   Would you like to use this message? (Y/n):
-   ```
+# Install Combo
+brew install combo
 
-    - `feat`: Indicates a new feature.
-    - `config`: Scope of the change (optional but recommended).
-    - Description: Clear and concise explanation of the change.
-
-2. **Branch Name**:
-   Generate a branch name based on your changes or tickets:
-   ```bash
-   combo branch
-   ```
-
-   Example:
-   ```
-   feat/config-api-key-support
-   ```
-
-3. **Issue Tracker**:
-   Link a commit to an issue tracker by providing the issue ID:
-   ```bash
-   combo issue 123
-   ```
-
-   Example:
-   ```
-   Linked commit to issue #123.
-   ```
-
-4. **Changelog**:
-   Generate a changelog from your Git history:
-   ```bash
-   combo changelog
-   ```
-
----
-
-## Configuration
-
-Combo stores its configuration in `~/.combo/config`. The configuration file is created automatically if it doesn’t exist.
-
-### Example Configuration
-
-```plaintext
-# ~/.combo/config
-openai_api_key=sk-xxxxxxxxxx
-prompt_locale=en-US
-prompt_max_length=72
+# Verify installation
+combo version
 ```
 
-### Managing Configuration
+### 📥 Direct Download
 
-- **Set a key**:
-  ```bash
-  combo config set <key> <value>
-  ```
-  Example:
-  ```bash
-  combo config set openai_api_key sk-xxxxxxxxxx
-  ```
+Download the latest release from [GitHub Releases](https://github.com/tolgaOzen/combo/releases).
 
-- **Get a key**:
-  ```bash
-  combo config get <key>
-  ```
-  Example:
-  ```bash
-  combo config get prompt_locale
-  ```
+### 🔧 Build from Source
 
----
+```bash
+git clone https://github.com/tolgaOzen/combo.git
+cd combo
+make build
+```
 
-## Example Workflow
+## 🚀 Quick Start
 
-1. **Stage Changes**:
+1. **Set up your OpenAI API key:**
+   ```bash
+   combo config set openai_api_key sk-your-api-key-here
+   ```
+
+2. **Stage some changes:**
    ```bash
    git add .
    ```
 
-2. **Generate and Confirm a Commit Message**:
+3. **Generate and commit:**
    ```bash
    combo commit
    ```
 
-   Example Interaction:
-   ```
-   Here’s your commit message:
+## 💻 Usage
 
-   ➤ fix(auth): resolve token expiration issue for multi-tenant support
+### 📋 Available Commands
 
-   Would you like to use this message? (Y/n):
-   ```
+| Command | Description | Example |
+|---------|-------------|---------|
+| `combo commit` | Generate AI-powered commit messages | `combo commit` |
+| `combo branch` | Create intelligent branch names | `combo branch` |
+| `combo config` | Manage configuration settings | `combo config set key value` |
+| `combo version` | Show version information | `combo version` |
 
-3. **Generate a Branch Name**:
-   ```bash
-   combo branch
-   ```
+### 🎯 Command Details
 
-   Example:
-   ```
-   fix/auth-token-expiration
-   ```
+#### 💬 Commit Messages
 
-4. **Link a Commit to an Issue**:
-   ```bash
-   combo issue 456
-   ```
+Generate conventional commit messages based on your staged changes:
 
-   Example:
-   ```
-   Linked commit to issue #456.
-   ```
-
-5. **Generate a Changelog**:
-   ```bash
-   combo changelog
-   ```
-
-   Example:
-   ```
-   ## [1.2.0] - 2024-01-01
-
-   ### Features
-   - feat(config): add support for managing API keys and locales
-
-   ### Bug Fixes
-   - fix(auth): resolve token expiration issue for multi-tenant support
-   ```
-
----
-
-## Requirements
-
-- **Git**: Must be installed and configured.
-- **OpenAI API Key**: Required for AI-powered features.
-
----
-
-## Contributing
-
-Contributions are welcome! Submit issues or pull requests on the GitHub repository.
-
----
-
-## License
-
-Combo is licensed under the MIT License. See the `LICENSE` file for more details.
+```bash
+combo commit
 ```
+
+**Interactive Preview:**
+```
+Generating your commit message...
+
+Here's your commit message:
+
+➤ feat(auth): add OAuth2 integration with Google provider
+
+Would you like to use this message? (Y/n):
+```
+
+**Commit Types Supported:**
+- `feat` - New features
+- `fix` - Bug fixes  
+- `docs` - Documentation changes
+- `style` - Code style changes
+- `refactor` - Code refactoring
+- `test` - Adding tests
+- `chore` - Maintenance tasks
+
+#### 🌿 Branch Names
+
+Create descriptive branch names from your changes:
+
+```bash
+combo branch
+```
+
+**Example Output:**
+```
+feat/oauth2-google-integration
+fix/memory-leak-user-service
+docs/api-authentication-guide
+```
+
+## ⚙️ Configuration
+
+Combo stores configuration in `~/.combo/config`. The file is created automatically with defaults.
+
+### 🔧 Configuration Options
+
+| Setting | Description | Default | Example |
+|---------|-------------|---------|---------|
+| `openai_api_key` | Your OpenAI API key | *Required* | `sk-xxx...` |
+| `prompt_locale` | Language for prompts | `en-US` | `en-US`, `fr-FR`, `es-ES` |
+| `prompt_max_length` | Max commit message length | `72` | `50`, `72`, `100` |
+
+### 🛠️ Managing Configuration
+
+```bash
+# Set configuration values
+combo config set openai_api_key sk-your-key-here
+combo config set prompt_locale en-US
+combo config set prompt_max_length 72
+
+# Get configuration values  
+combo config get openai_api_key
+combo config get prompt_locale
+```
+
+### 🌍 Supported Languages
+
+| Language | Code | Language | Code |
+|----------|------|----------|------|
+| English (US) | `en-US` | Korean | `ko-KR` |
+| English (UK) | `en-GB` | Japanese | `ja-JP` |
+| French | `fr-FR` | Chinese (Simplified) | `zh-CN` |
+| Spanish | `es-ES` | Chinese (Traditional) | `zh-TW` |
+| German | `de-DE` | Portuguese (Brazil) | `pt-BR` |
+| Italian | `it-IT` | Russian | `ru-RU` |
+| Arabic | `ar-SA` | Hindi | `hi-IN` |
+
+## 🔄 Example Workflow
+
+```bash
+# 1. Make your changes
+echo "console.log('Hello World');" > app.js
+
+# 2. Stage changes
+git add .
+
+# 3. Generate commit message
+combo commit
+# Output: feat: add hello world console output
+
+# 4. Create a new branch for next feature
+combo branch
+# Output: feat/user-authentication
+
+# 5. Switch to the new branch
+git checkout feat/user-authentication
+```
+
+## 📋 Requirements
+
+- **Git**: Version 2.0 or higher
+- **OpenAI API Key**: Required for AI-powered features ([Get yours here](https://platform.openai.com/api-keys))
+- **Internet Connection**: For API calls to OpenAI
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Error: "missing or empty 'openai_api_key' in configuration"**
+```bash
+# Solution: Set your OpenAI API key
+combo config set openai_api_key sk-your-key-here
+```
+
+**Error: "no staged changes found"**
+```bash
+# Solution: Stage your changes first
+git add .
+# Then run combo commit
+```
+
+**Error: "git command failed"**
+```bash
+# Solution: Ensure you're in a git repository
+git init
+# Or check if git is installed
+git --version
+```
+
+### 🔍 Debug Mode
+
+Enable verbose logging for troubleshooting:
+```bash
+export COMBO_DEBUG=1
+combo commit
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how to get started:
+
+1. **Fork the repository**
+2. **Create a feature branch:**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. **Make your changes and commit:**
+   ```bash
+   combo commit  # Use combo to generate your commit message!
+   ```
+4. **Push to your branch:**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+5. **Open a Pull Request**
+
+### 🏗️ Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/tolgaOzen/combo.git
+cd combo
+
+# Install dependencies
+go mod tidy
+
+# Run tests
+make test
+
+# Build the project
+make build
+
+# Run linters
+make lint-all
+```
+
+### 📝 Code Style
+
+- Follow Go conventions and `gofmt`
+- Add tests for new functionality
+- Update documentation for any API changes
+- Use conventional commits for your contributions
+
+## 📊 Performance
+
+- **Fast**: Commit message generation typically takes 1-3 seconds
+- **Lightweight**: Binary size ~10MB
+- **Efficient**: Minimal API calls with smart caching
+- **Offline-ready**: Configuration and Git operations work offline
+
+## 🛡️ Security
+
+- API keys are stored securely in `~/.combo/config`
+- Configuration files are created with restrictive permissions (0750)
+- No sensitive data is sent to external services except OpenAI API
+- All file operations are validated and sanitized
+
+## 📈 Roadmap
+
+- [ ] Support for additional AI providers (Claude, Gemini)
+- [ ] GitHub/GitLab integration for automatic PR descriptions
+- [ ] Team-based configuration sharing
+- [ ] Plugin system for custom commit types
+- [ ] Advanced diff analysis and suggestions
+- [ ] Integration with popular IDEs
+
+## 🆘 Support
+
+- **Issues**: [GitHub Issues](https://github.com/tolgaOzen/combo/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/tolgaOzen/combo/discussions)
+- **Documentation**: [Wiki](https://github.com/tolgaOzen/combo/wiki)
+
+## 📄 License
+
+Combo is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+---
+
+<div align="center">
+  <p>Made with ❤️ by <a href="https://github.com/tolgaOzen">Tolga Ozen</a></p>
+  <p>⭐ Star this project if you find it helpful!</p>
+</div>
