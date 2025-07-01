@@ -45,9 +45,9 @@ func (m branchModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "y", "Y", "", tea.KeyEnter.String():
-			return commitModel{message: m.message, choice: "yes", quitting: true}, tea.Quit
+			return branchModel{message: m.message, choice: "yes", quitting: true}, tea.Quit
 		case "n", "N":
-			return commitModel{message: m.message, choice: "no", quitting: true}, tea.Quit
+			return branchModel{message: m.message, choice: "no", quitting: true}, tea.Quit
 		case tea.KeyCtrlC.String(), tea.KeyEsc.String():
 			return m, tea.Quit
 		}
