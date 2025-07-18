@@ -1,6 +1,4 @@
 <div align="center">
-  <img src="assets/combo.svg" alt="Combo CLI Logo" width="200" height="200">
-  
   # 🚀 Combo CLI
   
   **AI-Powered Git Workflow Automation**
