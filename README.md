@@ -1,14 +1,13 @@
-<div align="center">
-  # 🚀 Combo CLI
+# 🚀 Combo CLI
   
-  **AI-Powered Git Workflow Automation**
+**AI-Powered Git Workflow Automation**
   
-  [![Version](https://img.shields.io/badge/version-v0.2.3-blue.svg)](https://github.com/tolgaOzen/combo/releases)
-  [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-  [![Go Report Card](https://goreportcard.com/badge/github.com/tolgaOzen/combo)](https://goreportcard.com/report/github.com/tolgaOzen/combo)
+[![Version](https://img.shields.io/badge/version-v0.2.3-blue.svg)](https://github.com/tolgaOzen/combo/releases)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/tolgaOzen/combo)](https://goreportcard.com/report/github.com/tolgaOzen/combo)
   
-  *Simplify your Git workflows with AI-generated commit messages, branch names, and more.*
-</div>
+*Simplify your Git workflows with AI-generated commit messages, branch names, and more.*
+
 
 ---
 
